@@ -26,29 +26,30 @@ $(function() {
             expect(allFeeds.length).not.toBe(0);
         });
 
-        describe('Each feed', function() {
+        describe('Each feed', function() {            
+            /* TODO: Write a test that loops through each feed
+            * in the allFeeds object and ensures it has a URL defined
+            * and that the URL is not empty.
+            */
             for (let feed of allFeeds) {
-                /* TODO: Write a test that loops through each feed
-                * in the allFeeds object and ensures it has a URL defined
-                * and that the URL is not empty.
-                */
                 it(`${feed.id}'s url is ${feed.url}`, function() {                
                     expect(feed.url).toBeDefined();
                     expect(feed.url).not.toBeNull();
                     expect(feed.url).not.toBe('');
                     // expect http?
                 }); 
-                
-                /* TODO: Write a test that loops through each feed
-                * in the allFeeds object and ensures it has a name defined
-                * and that the name is not empty.
-                */
+            }
+            /* TODO: Write a test that loops through each feed
+            * in the allFeeds object and ensures it has a name defined
+            * and that the name is not empty.
+            */
+            for (let feed of allFeeds) {
                 it(`${feed.id}'s name is ${feed.name}`, function() {                
                     expect(feed.name).toBeDefined();
                     expect(feed.name).not.toBeNull();
                     expect(feed.name).not.toBe('');
                 }); 
-            }  
+            }            
         });
     });
 
