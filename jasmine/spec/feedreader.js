@@ -28,7 +28,6 @@ $(function() {
 
         describe('Each feed', function() {
             for (let feed of allFeeds) {
-                console.log(feed);
                 /* TODO: Write a test that loops through each feed
                 * in the allFeeds object and ensures it has a URL defined
                 * and that the URL is not empty.
@@ -71,7 +70,7 @@ $(function() {
         * should have two expectations: does the menu display when
         * clicked and does it hide when clicked again.
         */        
-        it('chages visibility when the menu icon is clicked', function() {
+        it('changes visibility when the menu icon is clicked', function() {
             // Displays when clicked      
             $('.icon-list').trigger('click'); // jQuery click trigger
             expect(body.className).toBe('');
@@ -89,12 +88,53 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
+        beforeEach(function(done) {
+            loadFeed(0 , function() {
+                done();
+            });
+        });
+
+        it('have at least a single .entry element within the .feed container', function(done) {
+            // If href attribute of the entry is defined, assume done
+            expect($('.feed').children('.entry-link').attr('href')[0]).toBeDefined();
+            done();
+        });
     });
 
     /* TODO: Write a new test suite named "New Feed Selection" */
-
+    describe('New Feed Selection', function() {
+        var testFeed = 'Test Feed';
+        var feedList = $('.feed-list');
+        var feedItemTemplate = Handlebars.compile($('.tpl-feed-list-item').html());
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+        beforeEach(function(done) {
+            allFeeds.push({ name: testFeed, url: 'http://feeds.feedburner.com/CssTricks' });            
+            this.index = allFeeds.length-1;           
+
+            allFeeds[this.index].id = this.index;
+            feedList.append(feedItemTemplate(allFeeds[this.index]));        
+
+            loadFeed(this.index , function() {
+                done();
+            });
+        });
+
+        it('the content changes when loaded', function(done) {
+            expect($('.header-title').text()).toBe(testFeed);
+            done();
+        });
+
+        // Remove test element after done
+        afterEach(function() {
+            // remove test feed
+            allFeeds.splice(this.index, 1);
+            // remove from side menu
+            $('.feed-list li').eq(this.index).remove();
+            // load default item
+            loadFeed(0);
+        });
+    });
 }());
