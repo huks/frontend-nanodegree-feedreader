@@ -99,12 +99,14 @@ $(function() {
             });
         });
 
-        it('have at least a single .entry element within the .feed container', function(done) {
+        it('have at least a single .entry element within the .feed container', function() {
             // Select the .entry element that are inside .feed containter element.
             // Use length property to get the number of .entry element
             // Use toBeGreaterThan matcher to check if there's at least one element in th DOM.
             expect($('.feed .entry').length).toBeGreaterThan(0);
-            done();
+            // There's no asynchronous tasks in this it block.
+            // Using callback function (done) is redundant.
+            // done();
         });
     });
 
