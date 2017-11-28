@@ -57,14 +57,14 @@ $(function() {
 
     /* TODO: Write a new test suite named "The menu" */
     describe('The menu', function() {
-        var body = document.body;
         /* TODO: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
-        it('is hidden by default', function() {            
-            expect(body.className).toBe('menu-hidden');
+        it('is hidden by default', function() {
+            expect(document.body.classList).toContain('menu-hidden');          
+            // expect($('body').hasClass('menu-hidden')).toBeTruthy();
         });
 
         /* TODO: Write a test that ensures the menu changes
@@ -75,10 +75,13 @@ $(function() {
         it('changes visibility when the menu icon is clicked', function() {
             // Displays when clicked      
             $('.icon-list').trigger('click'); // jQuery click trigger
-            expect(body.className).toBe('');
+            expect(document.body.classList).not.toContain('menu-hidden');
+            // expect($('body').hasClass('menu-hidden')).toBeFalsy()
+
             // Hides when clicked again
             $('.icon-list').trigger('click');
-            expect(body.className).toBe('menu-hidden');
+            expect(document.body.classList).toContain('menu-hidden'); 
+            // expect($('body').hasClass('menu-hidden')).toBeTruthy();
         });
     });        
 
@@ -90,53 +93,46 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
-        beforeEach(function(done) {
-            loadFeed(0 , function() {
+        beforeEach(function(done) {            
+            loadFeed(0 , function() {                
                 done();
             });
         });
 
         it('have at least a single .entry element within the .feed container', function(done) {
-            // If href attribute of the entry is defined, assume done
-            expect($('.feed').children('.entry-link').attr('href')[0]).toBeDefined();
+            // Select the .entry element that are inside .feed containter element.
+            // Use length property to get the number of .entry element
+            // Use toBeGreaterThan matcher to check if there's at least one element in th DOM.
+            expect($('.feed .entry').length).toBeGreaterThan(1);
             done();
         });
     });
 
     /* TODO: Write a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function() {
-        var testFeed = 'Test Feed';
-        var feedList = $('.feed-list');
-        var feedItemTemplate = Handlebars.compile($('.tpl-feed-list-item').html());
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+        var feedFirst, feedSecond;
+
         beforeEach(function(done) {
-            allFeeds.push({ name: testFeed, url: 'http://feeds.feedburner.com/CssTricks' });            
-            this.index = allFeeds.length-1;           
-
-            allFeeds[this.index].id = this.index;
-            feedList.append(feedItemTemplate(allFeeds[this.index]));        
-
-            loadFeed(this.index , function() {
-                done();
+            console.log('beforeEach');
+            // Calling first loadFeed()
+            loadFeed(0 , function() {
+                feedFirst = $('.feed .entry:eq(0)').find('h2').html();
+                // Calling second loadFeed() on callback
+                loadFeed(1 , function() {
+                    feedSecond = $('.feed .entry:eq(0)').find('h2').html();
+                    done();
+                });
             });
+            
         });
 
         it('the content changes when loaded', function(done) {
-            expect($('.header-title').text()).toBe(testFeed);
+            expect(feedFirst).not.toBe(feedSecond);
             done();
-        });
-
-        // Remove test element after done
-        afterEach(function() {
-            // remove test feed
-            allFeeds.splice(this.index, 1);
-            // remove from side menu
-            $('.feed-list li').eq(this.index).remove();
-            // load default item
-            loadFeed(0);
         });
     });
 }());
