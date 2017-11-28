@@ -103,7 +103,7 @@ $(function() {
             // Select the .entry element that are inside .feed containter element.
             // Use length property to get the number of .entry element
             // Use toBeGreaterThan matcher to check if there's at least one element in th DOM.
-            expect($('.feed .entry').length).toBeGreaterThan(1);
+            expect($('.feed .entry').length).toBeGreaterThan(0);
             done();
         });
     });
